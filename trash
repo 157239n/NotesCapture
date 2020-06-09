@@ -1,0 +1,62 @@
+
+    //const url = "https://fetch.spec.whatwg.org/#simple-header";
+    //const url = "http://mint-1:8888/tree/random";
+    const url = "https://stackoverflow.com/questions/3076414/ways-to-circumvent-the-same-origin-policy";
+    //const url = "https://github.com/157239n/Virus";
+    //const url = "https://arxiv.org/pdf/1901.06032.pdf";
+    //const url = "https://github.com/hieudan225/step";
+    //const url = "https://github.com/hieudan225";
+    //const url = "https://www.google.com/search?sxsrf=ALeKk00x9mSGurMtvEiuVSvCZlxccOZw7g%3A1591592825260&ei=ecfdXuPAD5PM1QHMpqbYDQ&q=set+iframe+origin+of+base64&oq=set+iframe+origin+of+base64&gs_lcp=CgZwc3ktYWIQA1AAWABgk4kBaABwAHgAgAEAiAEAkgEAmAEAqgEHZ3dzLXdpeg&sclient=psy-ab&ved=0ahUKEwij4eenufHpAhUTZjUKHUyTCdsQ4dUDCAw&uact=5";
+    //const url = "https://157239n.com";
+    //const url = "https://nn.157239n.com";
+    //$("#page").load("getRss.php?rss=" + btoa(url));
+    fetch("getRss.php?rss=" + btoa(url))
+        .then(response => response.text())
+        //.then(data => document.getElementById("page").src="data:text/html;base64," + data);
+        //.then(data => document.getElementById("page").src="data:text/html;base64," + btoa(unescape(encodeURIComponent(data))));
+        .then(data => {
+            document.getElementById('page').contentWindow.document.write(data);
+            //document.getElementById("page").src="data:text/html;charset=utf-8," + encodeURIComponent(data);
+            //$("#page").html(data);
+            //console.log(encodeURI(data));
+        });
+
+    function remember() {
+        elements = elementsFromStrings(selectionStrings());
+    }
+
+    async function sha256(message) {
+        // encode as UTF-8
+        const msgBuffer = new TextEncoder('utf-8').encode(message);
+
+        // hash the message
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+        // convert ArrayBuffer to Array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+        // convert bytes to hex string
+        const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+        return hashHex;
+    }
+
+    function reposition() {
+        boundingBoxOfElements(elements);
+    }
+
+
+
+<!-- <iframe id="page" src="javascript:void(0);"></iframe>
+<iframe id="page" src="getRss.php?rss=aHR0cHM6Ly9zdGFja292ZXJmbG93LmNvbS9xdWVzdGlvbnMvMzA3NjQxNC93YXlzLXRvLWNpcmN1bXZlbnQtdGhlLXNhbWUtb3JpZ2luLXBvbGljeQ=="></iframe>
+<iframe id="page" src="getRss.php?rss=aHR0cHM6Ly9ubi4xNTcyMzluLmNvbQ=="></iframe>
+-->
+<!-- <iframe src="getRss.php?rss="></iframe> -->
+
+
+
+    function parseHtmlEntities(str) {
+        return str.replace(/&#([0-9]{1,4});/gi, function (match, numStr) {
+            return String.fromCharCode(parseInt(numStr, 10));
+        });
+    }
+
