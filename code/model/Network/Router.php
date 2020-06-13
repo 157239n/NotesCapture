@@ -174,8 +174,8 @@ class Router {
     private function backNavs(string $requestUri): int {
         $fragments = explode("/", trim($requestUri, "/"));
         if ($fragments[0] !== CHARACTERISTIC_HASH) return -1;
-        for ($i = 19; $i >= 1; $i--)
-            if (((int)$fragments[20 - $i]) != $i % 10) return $i;
+        for ($i = PADDING_NUMBER - 1; $i >= 1; $i--)
+            if (((int)$fragments[PADDING_NUMBER - $i]) != $i % 10) return $i;
         return 0;
     }
 
@@ -191,7 +191,7 @@ class Router {
         if ($backNavs === -1) return ltrim($requestUri, "/");
         $remaining = [];
         $fragments = explode("/", trim($requestUri, "/"));
-        for ($i = 20 - $backNavs; $i < count($fragments); $i++)
+        for ($i = PADDING_NUMBER - $backNavs; $i < count($fragments); $i++)
             $remaining[] = $fragments[$i];
         return implode("/", $remaining);
     }

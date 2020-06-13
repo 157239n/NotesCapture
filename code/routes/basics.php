@@ -3,8 +3,7 @@
 use Kelvinho\Notes\Singleton\Header;
 
 $router->get("", function () use ($session) {
-    Header::redirect("dashboard");
-    /*
+    //Header::redirect("dashboard");
     // try to pass the website through again even in this scenario
     if ($session->has("remote")) {
         //Header::redirectBare("http://" . parse_url($session->getCheck("remote"))["host"]);
@@ -35,6 +34,6 @@ $router->get(CHARACTERISTIC_HASH . "/faq", function () use ($authenticator, $ses
     include(__DIR__ . "/../view/faq.php");
 });
 
-$router->get(CHARACTERISTIC_HASH . "/9/8/7/6/5/4/3/2/1/0/9/8/7/6/5/4/3/2/1/site", function () use ($session, $websiteFactory) {
+$router->get(CHARACTERISTIC_HASH . SITE, function () use ($session, $websiteFactory) {
     include(__DIR__ . "/../view/site.php");
 });

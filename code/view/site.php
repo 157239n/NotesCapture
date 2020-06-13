@@ -19,6 +19,8 @@ use Kelvinho\Notes\Singleton\HtmlTemplate;
 if (!$session->has("remote")) Header::redirect("dashboard");
 if (!$session->has("websiteId")) Header::redirect("dashboard");
 $url = $session->getCheck("remote");
+$parsed_url = parse_url($url);
+$modifiedUrl = str_replace($parsed_url["scheme"] . "://" . $parsed_url["host"], DOMAIN, $url);
 $websiteId = $session->getCheck("websiteId");
 $website = $websiteFactory->get($websiteId);
 $highlights = $website->getHighlights();
@@ -52,7 +54,7 @@ $highlights = $website->getHighlights();
     </style>
 </head>
 <body>
-<iframe sandbox="allow-same-origin allow-scripts" id="page" src="<?php echo CHARACTERISTIC_DOMAIN; ?>/empty"></iframe>
+<iframe id="page" src="<?php echo $modifiedUrl; ?>"></iframe>
 <div id="panel">
     <?php HtmlTemplate::topNavigation(function () use ($websiteId) { ?>
         <a class="w3-bar-item w3-button w3-border-right" onclick="highlights.capture(<?php echo $websiteId; ?>)">New</a>
@@ -85,7 +87,7 @@ $highlights = $website->getHighlights();
     const displayMetrics = false; // displays metrics of the algorithm
 
     const highlights = new Highlights();
-
+/*
     fetch("<?php echo DOMAIN_CONTROLLER; ?>/getRss?rss=" + btoa(`<?php echo $url; ?>`)).then(response => response.text())
         .then(data => {
             //gui.page.attr("srcdoc", data);

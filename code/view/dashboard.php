@@ -160,7 +160,7 @@ $user = $userFactory->get($user_handle);
             data: {
                 websiteId: websiteId
             },
-            success: () => window.location = "<?php echo CHARACTERISTIC_DOMAIN; ?>/9/8/7/6/5/4/3/2/1/0/9/8/7/6/5/4/3/2/1/site"
+            success: () => window.location = "<?php echo SITE_DOMAIN; ?>"
         });
     }
 
