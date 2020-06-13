@@ -30,7 +30,7 @@ class UserFactoryImp implements UserFactory {
         $password_salt = substr(hash("sha256", rand()), 0, 5);
         $password_hash = hash("sha256", $password_salt . $password);
 
-        $categoryId = $this->categoryFactory->new()->getCategoryId();
+        $categoryId = $this->categoryFactory->new(null, "", $user_handle)->getCategoryId();
 
         if (!$this->mysqli->query("insert into users (user_handle, password_hash, password_salt, name, timezone, category_id) values ('$user_handle', '$password_hash', '$password_salt', '" . $this->mysqli->escape_string($name) . "', '$timezone', $categoryId)")) Logs::error($this->mysqli->error);
 

@@ -67,9 +67,8 @@ class CategoryFactory {
         throw new CategoryNotFound();
     }
 
-    public function new(Category $parentCategory = null, string $name = ""): Category {
-        if (!$this->active) throw new CategoryNotFound();
-        $user_handle = $this->session->getCheck("user_handle");
+    public function new(Category $parentCategory = null, string $name = "", string $user_handle = ""): Category {
+        if ($this->active) $user_handle = $this->session->getCheck("user_handle");
         if ($parentCategory == null) {
             if (!$this->mysqli->query("insert into categories (user_handle, name) values ('$user_handle', 'Root')")) Logs::error($this->mysqli->error);
             return $this->get($this->mysqli->insert_id);
