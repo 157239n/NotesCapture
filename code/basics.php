@@ -174,7 +174,7 @@ namespace Kelvinho\Notes {
      */
     function get_title(string $url): string {
         try {
-            $str = file_get_contents($url);
+            $str = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 1))));
             if ($str === false) return "";
             if (strlen($str) > 0) {
                 $str = trim(preg_replace('/\s+/', ' ', $str)); // supports line breaks inside <title>

@@ -27,18 +27,22 @@ class CategoryFactory {
      * Gets a single category given id. This still has links all the way to the root node.
      *
      * @param $categoryId
+     * @param string $user_handle Custom user handle, if in scenarios where it can't be obtained from the session
      * @return Category
      */
-    public function get($categoryId): Category {
-        if (!$this->active) throw new CategoryNotFound();
+    public function get($categoryId, string $user_handle = ""): Category {
         if (!$answer = $this->mysqli->query("select user_handle, parent_category_id, name from categories where category_id = '$categoryId'")) throw new CategoryNotFound();
         if (!$row = $answer->fetch_assoc()) throw new CategoryNotFound();
         $parentCategoryId = (int)$row["parent_category_id"];
         $name = $row["name"];
-        $user_handle = $row["user_handle"];
-        if ($this->session->getCheck("user_handle") !== $user_handle) throw new CategoryNotFound();
-        if ($parentCategoryId === 0) return new Category($this->websiteFactory, $categoryId, null, $name, 0, $user_handle, false);
-        else return new Category($this->websiteFactory, $categoryId, $this->get($parentCategoryId), $name, $parentCategoryId, $user_handle, false);
+        if (!$this->session->has("user_handle")) {
+            if ($user_handle !== $row["user_handle"]) throw new CategoryNotFound();
+        } else {
+            $user_handle = $row["user_handle"];
+            if ($this->session->getCheck("user_handle") !== $user_handle) throw new CategoryNotFound();
+        }
+        if ($parentCategoryId === 0) return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, null, $name, 0, $user_handle, false);
+        else return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, $this->get($parentCategoryId), $name, $parentCategoryId, $user_handle, false);
     }
 
     public function getRoot(): Category {
@@ -53,9 +57,9 @@ class CategoryFactory {
             $categoryId = (int)$row["category_id"];
             $name = $row["name"];
             if (isset($categories[$parentCategoryId])) {
-                $category = new Category($this->websiteFactory, $categoryId, $categories[$parentCategoryId], $name, $parentCategoryId, $user_handle, true);
+                $category = new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, $categories[$parentCategoryId], $name, $parentCategoryId, $user_handle, true);
                 $categories[$parentCategoryId]->addChild($category);
-            } else $category = new Category($this->websiteFactory, $categoryId, null, $name, $parentCategoryId, $user_handle, true);
+            } else $category = new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, null, $name, $parentCategoryId, $user_handle, true);
             $categories[$categoryId] = $category;
             $randomCategory = $category;
         }
@@ -71,11 +75,11 @@ class CategoryFactory {
         if ($this->active) $user_handle = $this->session->getCheck("user_handle");
         if ($parentCategory == null) {
             if (!$this->mysqli->query("insert into categories (user_handle, name) values ('$user_handle', 'Root')")) Logs::error($this->mysqli->error);
-            return $this->get($this->mysqli->insert_id);
+            return $this->get($this->mysqli->insert_id, $user_handle);
         } else {
             $parentCategoryId = $parentCategory->getCategoryId();
             if (!$this->mysqli->query("insert into categories (user_handle, parent_category_id, name) values ('$user_handle', $parentCategoryId, '" . $this->mysqli->escape_string($name) . "')")) Logs::error($this->mysqli->error);
-            return $this->get($this->mysqli->insert_id);
+            return $this->get($this->mysqli->insert_id, $user_handle);
         }
     }
 }

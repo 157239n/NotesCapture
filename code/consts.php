@@ -21,10 +21,9 @@ define("DOMAIN_CONTROLLER", CHARACTERISTIC_DOMAIN . "/ctrls");
 define("DOMAIN_RESOURCES", CHARACTERISTIC_DOMAIN . "/resources");
 //define("SITE", "/9/8/7/6/5/4/3/2/1/0/9/8/7/6/5/4/3/2/1/site");
 define("SITE", "/9/8/7/6/5/4/3/2/1/site");
-define("SITE_DOMAIN", CHARACTERISTIC_DOMAIN . SITE);
 //define("PADDING_NUMBER", 20);
 define("PADDING_NUMBER", 10);
-
+define("REMOTE_EXPIRES_DURATION", 10); // used in setRemote
 
 // inner workings related
 define("NAME_LENGTH_LIMIT", 50);

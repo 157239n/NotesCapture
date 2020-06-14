@@ -26,13 +26,16 @@ class Category {
     private array $children = array();
     private string $name;
     private mysqli $mysqli;
+    private CategoryFactory $categoryFactory;
     private WebsiteFactory $websiteFactory;
     private string $user_handle;
     private bool $fullGraph; // whether instantiation method involves constructing a whole graph
     /** @var Website[] */
     private ?array $websites = null;
 
-    public function __construct(WebsiteFactory $websiteFactory, int $categoryId, ?Category $parentCategory, string $name, int $parentCategoryId, string $user_handle, bool $fullGraph) {
+    public function __construct(mysqli $mysqli, CategoryFactory $categoryFactory, WebsiteFactory $websiteFactory, int $categoryId, ?Category $parentCategory, string $name, int $parentCategoryId, string $user_handle, bool $fullGraph) {
+        $this->mysqli = $mysqli;
+        $this->categoryFactory = $categoryFactory;
         $this->websiteFactory = $websiteFactory;
         $this->categoryId = $categoryId;
         $this->parentCategory = $parentCategory;
@@ -92,6 +95,7 @@ class Category {
      * @return Category|null
      */
     public function findChildCategory(int $categoryId): ?Category {
+        if ($this->categoryId === $categoryId) return $this;
         if (!$this->fullGraph) return $this->getRootCategory()->findChildCategory($this->categoryId)->findChildCategory($categoryId);
         foreach ($this->children as $child) {
             $result = $child->findChildCategory($categoryId);
@@ -124,7 +128,7 @@ class Category {
      * @return Category[]
      */
     public function getChildren(): array {
-        if (!$this->fullGraph) return $this->getRootCategory()->findChildCategory($this->categoryId)->getChildren();
+        if (!$this->fullGraph) $this->children = $this->categoryFactory->getRoot()->findChildCategory($this->categoryId)->getChildren();
         return $this->children;
     }
 
@@ -133,8 +137,8 @@ class Category {
     }
 
     public function delete(): void {
-        foreach ($this->getWebsites() as $website) $website->delete();
         foreach ($this->getChildren() as $childCategory) $childCategory->delete();
+        foreach ($this->getWebsites() as $website) $website->delete();
         $this->mysqli->query("delete from categories where category_id = $this->categoryId");
     }
 }

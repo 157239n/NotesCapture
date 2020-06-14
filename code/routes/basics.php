@@ -3,14 +3,16 @@
 use Kelvinho\Notes\Singleton\Header;
 
 $router->get("", function () use ($session) {
-    //Header::redirect("dashboard");
-    // try to pass the website through again even in this scenario
+    // try to pass the 3rd party website through again even in this scenario
     if ($session->has("remote")) {
-        //Header::redirectBare("http://" . parse_url($session->getCheck("remote"))["host"]);
-        return true;
+        if ($session->getCheck("remoteExpires") < time()) { // remote has already expired, meaning we should redirect to our stuff
+            Header::redirect("dashboard");
+        } else {
+            //Header::redirectBare("http://" . parse_url($session->getCheck("remote"))["host"]);
+            return true;
+        }
     } else Header::redirect("dashboard");
     return false;
-    /**/
 });
 
 $router->get("test", function () use ($mysqli, $requestData, $session, $userFactory, $categoryFactory, $websiteFactory) {
@@ -19,7 +21,14 @@ $router->get("test", function () use ($mysqli, $requestData, $session, $userFact
 
 $router->get(CHARACTERISTIC_HASH, fn() => Header::redirect("dashboard"));
 
-$router->get(CHARACTERISTIC_HASH . "/empty", function () {
+$router->get(CHARACTERISTIC_HASH . "/logout", function () {
+    session_unset();
+    session_destroy();
+    Header::redirect("login");
+});
+
+$router->get(CHARACTERISTIC_HASH . "/profile", function () use ($authenticator, $requestData, $timezone, $userFactory, $session) {
+    include(__DIR__ . "/../view/profile.php");
 });
 
 $router->get(CHARACTERISTIC_HASH . "/login", function () use ($authenticator, $requestData, $timezone) {

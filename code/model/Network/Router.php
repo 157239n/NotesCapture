@@ -128,6 +128,8 @@ class Router {
 
         header_remove();
         $curl = curl_init($redirectUrl);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($curl, $header) {
             if (strpos($header, "Content-Type") === 0) header($header, true);

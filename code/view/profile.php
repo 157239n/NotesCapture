@@ -18,7 +18,10 @@ $user = $userFactory->get($session->getCheck("user_handle"));
     </style>
 </head>
 <body>
-<?php HtmlTemplate::topNavigation(null, null, null, null, $user->isHold()); ?>
+<?php HtmlTemplate::topNavigation(function() { ?>
+    <a class="w3-bar-item w3-button" href="<?php echo CHARACTERISTIC_DOMAIN; ?>/dashboard">Dashboard</a>
+<?php }); ?>
+<br><br>
 <h2>Account</h2>
 <label for="user_handle">User name</label><input id="user_handle" class="w3-input" type="text"
                                                  value="<?php echo $user->getHandle(); ?>" disabled>
@@ -35,13 +38,6 @@ $user = $userFactory->get($session->getCheck("user_handle"));
 <br><br>
 <button class="w3-btn w3-teal" onclick="update()">Update</button>
 <br><br>
-<label>Usage this month</label>
-<?php $user->usage()->display(); ?>
-<p>Above is the approximate resource you consume this month. Every month you have a free $10 credit. After you have
-    spent that free portion, you will have to enter in your payment details or you won't be able to launch new attacks.
-    After that, you can still launch attacks as usual. We won't charge you until you accumulate $5.</p>
-<div id="paypal-button-1"></div>
-<div id="paypal-button-2"></div>
 </body>
 <?php HtmlTemplate::scripts(); ?>
 <script>
@@ -56,7 +52,7 @@ $user = $userFactory->get($session->getCheck("user_handle"));
                 name: gui.name.val(),
                 timezone: gui.timezone.val()
             },
-            success: () => window.location = "<?php echo DOMAIN . "/profile"; ?>"
+            success: () => window.location = "<?php echo CHARACTERISTIC_DOMAIN . "/profile"; ?>"
         });
     }
 </script>

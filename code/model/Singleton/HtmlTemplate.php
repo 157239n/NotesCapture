@@ -42,9 +42,9 @@ class HtmlTemplate {
             <div class="w3-bar-item w3-button w3-right w3-dropdown-hover w3-light-grey" style="height: 38px;"><i
                         class="material-icons">settings</i>
                 <div class="w3-dropdown-content w3-bar-block w3-card-4" style="position: fixed;right: 0; top: 38px;">
-                    <a href="https://virus.kelvinho.org/profile" class="w3-bar-item w3-button">Profile</a>
-                    <!-- TODO: fix links -->
-                    <a href="https://virus.kelvinho.org/logout" class="w3-bar-item w3-button">Sign out</a>
+                    <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/profile" class="w3-bar-item w3-button">Profile</a>
+                    <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/faq" class="w3-bar-item w3-button">FAQ</a>
+                    <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/logout" class="w3-bar-item w3-button">Sign out</a>
                 </div>
             </div>
             <?php if ($additionalCb2 != null) $additionalCb2(); ?>

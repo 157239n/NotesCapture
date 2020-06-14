@@ -375,7 +375,7 @@
             highlight.updateDisplayMode(this.normalDisplayMode);
             this.updateUnknownAmount();
             // TODO: add the read more section, probably in FAQ
-            if (!this.highlights[this.highlights.length - 1].active) toast.display("Can't annotate! Comment is moved to unknown section. <a href='http://google.com' target='_blank'>Read more</a>");
+            if (!this.highlights[this.highlights.length - 1].active) toast.display("Can't annotate! Comment is moved to unknown section. <a href='<?php echo CHARACTERISTIC_DOMAIN; ?>/faq' target='_blank'>Read more</a>");
             $.ajax({
                 url: "<?php echo DOMAIN_CONTROLLER . "/addHighlight"; ?>",
                 type: "POST",

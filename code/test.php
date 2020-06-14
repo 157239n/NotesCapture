@@ -9,7 +9,7 @@ $user = $userFactory->new($user_handle, "sos", "Quang", "America/New_York");
 $rootCategory = $user->getRootCategory();
 /**/
 
-
+/*
 $user_handle = "ynes";
 if (!$session->has("user_handle")) {
     $session->set("user_handle", $user_handle);
@@ -82,3 +82,10 @@ fclose($fp);
 
 //echo "Something";
 //var_dump($_SERVER);
+
+//echo file_get_contents("https://www.tesla.com");
+//echo file_get_contents("https://www.tesla.com/careers/job/autopilot-designverificationinternshipfall2020-56965");
+//echo file_get_contents("https://domains.google.com");
+//echo file_get_contents("http://blackbox.nn.157239n.com/basics");
+
+//echo "abc";

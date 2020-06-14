@@ -54,7 +54,7 @@ $highlights = $website->getHighlights();
     </style>
 </head>
 <body>
-<iframe id="page" src="<?php echo $modifiedUrl; ?>"></iframe>
+<iframe id="page" sandbox="allow-same-origin allow-scripts" src="<?php echo $modifiedUrl; ?>" style="display: none"></iframe>
 <div id="panel">
     <?php HtmlTemplate::topNavigation(function () use ($websiteId) { ?>
         <a class="w3-bar-item w3-button w3-border-right" onclick="highlights.capture(<?php echo $websiteId; ?>)">New</a>
@@ -66,8 +66,8 @@ $highlights = $website->getHighlights();
     <?php }); ?>
     <input type="button" value="New highlight" onclick="highlights.capture(<?php echo $websiteId; ?>)">
     <div id="unknowns"></div>
-    <div id="toast" class="w3-round-xxlarge"></div>
 </div>
+<div id="toast" class="w3-round-xxlarge"></div>
 <div id="boundingBoxes"></div>
 </body>
 <?php HtmlTemplate::scripts(); ?>
@@ -86,9 +86,16 @@ $highlights = $website->getHighlights();
     };
     const displayMetrics = false; // displays metrics of the algorithm
 
+    if (window.innerWidth < 900) {
+        toast.display("This application can't work on phones and tablets. Too little space!");
+        gui.page.css("display", "none");
+        gui.panel.css("display", "none");
+        throw new Error();
+    }
+
     const highlights = new Highlights();
-/*
-    fetch("<?php echo DOMAIN_CONTROLLER; ?>/getRss?rss=" + btoa(`<?php echo $url; ?>`)).then(response => response.text())
+    /*
+        fetch("<?php echo DOMAIN_CONTROLLER; ?>/getRss?rss=" + btoa(`<?php echo $url; ?>`)).then(response => response.text())
         .then(data => {
             //gui.page.attr("srcdoc", data);
             document.getElementById('page').contentWindow.document.write(data); // old way
@@ -103,8 +110,33 @@ $highlights = $website->getHighlights();
         }, 200)
     );/**/
 
+    setTimeout(() => {
+        document.getElementById("page").contentWindow.onscroll = () => highlights.display();
+        document.title = "NotesCapture - " + document.getElementById("page").contentDocument.title;
+        console.log("Done");
+        <?php foreach ($highlights as $highlight) { ?>
+        toast.persistTillNextDisplay("Loading highlights...");
+        highlights.addFromServer(<?php echo $highlight->getHighlightId(); ?>, <?php echo $highlight->getWebsiteId(); ?>, "<?php echo $highlight->getRawStrings(); ?>", "<?php echo $highlight->getComment(); ?>")
+        <?php } ?>
+    }, 200);
+
     document.getElementById("panel").onwheel = (event) => {
         if (highlights.normalDisplayMode) gui.pageContentWindow.scrollBy(event.deltaX, event.deltaY);
     }
+
+    // refreshed, or reloaded. In that case, set the remote again, so that the root route points to the specified domain
+    if (performance.navigation.type !== 0) {
+        $.ajax({
+            url: "<?php echo DOMAIN_CONTROLLER . "/setRemote"; ?>",
+            type: "POST",
+            data: {
+                websiteId: <?php echo $websiteId; ?>
+            },
+            success: () => window.location = "<?php echo CHARACTERISTIC_DOMAIN . SITE; ?>"
+        });
+    } else gui.page.css("display", "block");
+
+    // reruns this every now and then, to make sure the bounding boxes change as the page changes slightly
+    setInterval(() => highlights.display(), 3000);
 </script>
 </html>

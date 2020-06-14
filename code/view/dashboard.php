@@ -133,7 +133,9 @@ $user = $userFactory->get($user_handle);
     <i class="material-icons" style="padding: 40px 50px;position: absolute;right: 0;font-size: 2em;cursor:pointer;"
        onclick="closeCategoryOverlay()">close</i>
 </div>
-<?php HtmlTemplate::topNavigation(); ?>
+<?php HtmlTemplate::topNavigation(function () { ?>
+    <a class="w3-bar-item w3-button" href="<?php echo CHARACTERISTIC_DOMAIN; ?>/dashboard">Dashboard</a>
+<?php }); ?>
 <br><br>
 <h2>Categories</h2>
 <ul id="categories">
@@ -160,7 +162,7 @@ $user = $userFactory->get($user_handle);
             data: {
                 websiteId: websiteId
             },
-            success: () => window.location = "<?php echo SITE_DOMAIN; ?>"
+            success: () => window.location = "<?php echo CHARACTERISTIC_DOMAIN . SITE; ?>"
         });
     }
 
@@ -199,12 +201,14 @@ $user = $userFactory->get($user_handle);
         justCategory = true;
         addWebsiteCategoryId = categoryId;
         gui.addWebsiteOverlay.addClass("active");
+        document.getElementById("txtAddWebsite").focus();
     }
 
     function openAddCategoryOverlay(categoryId) {
         justCategory = true;
         addCategoryCategoryId = categoryId;
         gui.addCategoryOverlay.addClass("active");
+        document.getElementById("txtAddCategory").focus();
     }
 
     function deleteCategory(categoryId) {
@@ -261,6 +265,10 @@ $user = $userFactory->get($user_handle);
 
     function closeCategoryOverlay() {
         gui.addCategoryOverlay.removeClass('active');
+    }
+
+    if (location.protocol !== "https:") {
+        location.protocol = "https:";
     }
 </script>
 </html>
