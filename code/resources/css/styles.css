@@ -1,65 +1,7 @@
 
-#page {
-    width: 70vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border-width: 0;
-}
-
 body {
     padding: 0 7% 6vh;
     text-align: justify;
-}
-
-#panel {
-    position: absolute;
-    top: 0;
-    left: 70vw;
-    width: 30vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-.boundingBox {
-    position: fixed;
-    background-color: rgba(198, 222, 31, 0.3);
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-    z-index: 10000;
-}
-
-.contentBox {
-    position: fixed;
-    /*background-color: rgba(255, 100, 100, 0.3);*/
-    top: -50vh;
-    left: 75vw;
-    width: 20vw;
-    z-index: 10000;
-    padding: 16px;
-}
-
-.unknownBox {
-    position: relative;
-    /*background-color: rgba(255, 100, 100, 0.3);*/
-    left: 5vw;
-    width: 20vw;
-    z-index: 10000;
-    padding: 16px;
-    margin-top: 20px;
-}
-
-#unknowns {
-    top: 38px;
-    height: calc(100vh - 38px);
-    width: 30vw;
-    overflow-y: scroll;
-    padding: 20px 0;
 }
 
 #toast {
@@ -75,6 +17,7 @@ body {
     text-align: center;
     padding: 8px 30px;
     font-size: 1.5em;
+    z-index: 50000;
 }
 
 #toast.activated {
@@ -87,4 +30,16 @@ body {
     z-index: 10001;
     width: 100%;
     left: 0;
+}
+
+#tooltip {
+    position: fixed;
+    opacity: 0;
+    padding: 8px;
+    transition: opacity 0.2s;
+    z-index: 30000;
+}
+
+#tooltip.activated {
+    opacity: 1;
 }

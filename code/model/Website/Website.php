@@ -4,11 +4,13 @@ namespace Kelvinho\Notes\Website;
 
 use Kelvinho\Notes\Highlight\Highlight;
 use Kelvinho\Notes\Highlight\HighlightFactory;
+use Kelvinho\Notes\Permission\PermissionFactory;
 use mysqli;
 
 class Website {
     private mysqli $mysqli;
     private HighlightFactory $highlightFactory;
+    private PermissionFactory $permissionFactory;
     private int $websiteId;
     private string $websiteUrl;
     private int $categoryId;
@@ -17,9 +19,10 @@ class Website {
     /** @var Highlight[] */
     private ?array $highlights = null;
 
-    public function __construct(mysqli $mysqli, HighlightFactory $highlightFactory, int $websiteId, string $websiteUrl, int $categoryId, string $title, string $user_handle) {
+    public function __construct(mysqli $mysqli, HighlightFactory $highlightFactory, PermissionFactory $permissionFactory, int $websiteId, string $websiteUrl, int $categoryId, string $title, string $user_handle) {
         $this->mysqli = $mysqli;
         $this->highlightFactory = $highlightFactory;
+        $this->permissionFactory = $permissionFactory;
         $this->websiteId = $websiteId;
         $this->websiteUrl = $websiteUrl;
         $this->categoryId = $categoryId;
@@ -58,6 +61,7 @@ class Website {
     public function delete(): void {
         $highlights = $this->getHighlights();
         foreach ($highlights as $highlight) $highlight->delete();
+        foreach ($this->permissionFactory->getFromWebsite($this) as $permission) $permission->delete();
         $this->mysqli->query("delete from websites where website_id = $this->websiteId");
     }
 }

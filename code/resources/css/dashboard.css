@@ -1,0 +1,48 @@
+
+#categories ul, #categories {
+    list-style-type: none;
+    margin: 0;
+}
+
+#categories {
+    padding: 0;
+}
+
+#categories li {
+    margin: 0;
+}
+
+#categories li div {
+    padding: 8px;
+    margin: 1px 0 0;
+    width: 100%;
+    cursor: pointer;
+    clear: both;
+    height: 54px;
+}
+
+.overlay {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background-color: #f0e68ccc;
+    opacity: 0;
+    z-index: 20000;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.overlay > div {
+    position: absolute;
+    width: 50vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -15,7 +15,7 @@ use DateTimeZone;
  */
 class Timezone {
     /** @var String[] */
-    private array $timezones = [];
+    private array $timezones;
     private array $niceLookingTimezones = []; // associative array of timezone string => nice looking name
     private array $offsetsInSeconds = []; // associative array of timezone string => offset in seconds
 
@@ -43,14 +43,10 @@ class Timezone {
         return $this->niceLookingTimezones[$timezone];
     }
 
-    public function getOffset(string $timezone): int {
-        return $this->offsetsInSeconds[$timezone];
-    }
-
     public function display(string $timezone, int $unixTime): string {
         return (new DateTime())
             ->setTimestamp($unixTime)
             ->setTimezone(new DateTimeZone($timezone))
-            ->format("Y/m/d h:i:sa");
+            ->format("g:i a M d, Y"); // Y/m/d h:i:sa
     }
 }

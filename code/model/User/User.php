@@ -23,6 +23,8 @@ class User {
     private string $user_handle;
     private string $name;
     private string $timezone;
+    private string $federated;
+    private string $pictureUrl;
     private Timezone $timezoneObject;
     private mysqli $mysqli;
     private CategoryFactory $categoryFactory;
@@ -34,26 +36,30 @@ class User {
      * @param Timezone $timezoneObject
      * @param CategoryFactory $categoryFactory
      * @param string $user_handle
+     * @param string $name
+     * @param string $timezone
+     * @param string $federated
+     * @param string $pictureUrl
      * @internal
      */
-    public function __construct(mysqli $mysqli, Timezone $timezoneObject, CategoryFactory $categoryFactory, string $user_handle) {
+    public function __construct(mysqli $mysqli, Timezone $timezoneObject, CategoryFactory $categoryFactory, string $user_handle, string $name, string $timezone, string $federated, string $pictureUrl) {
         $this->mysqli = $mysqli;
         $this->timezoneObject = $timezoneObject;
         $this->categoryFactory = $categoryFactory;
         $this->user_handle = $user_handle;
-        $this->loadState();
-    }
-
-    private function loadState(): void {
-        if (!$answer = $this->mysqli->query("select name, timezone from users where user_handle = '$this->user_handle'")) throw new UserNotFound();
-        if (!$row = $answer->fetch_assoc()) throw new UserNotFound();
-        $this->name = $row["name"];
-        $this->timezone = $row["timezone"];
+        $this->name = $name;
+        $this->timezone = $timezone;
+        $this->federated = $federated;
+        $this->pictureUrl = $pictureUrl;
     }
 
     public function getRootCategory(): Category {
         if ($this->rootCategory == null) $this->rootCategory = $this->categoryFactory->getRoot();
         return $this->rootCategory;
+    }
+
+    public function getPictureUrl(): string {
+        return $this->pictureUrl;
     }
 
     public function getTimezone(): string {
@@ -80,6 +86,6 @@ class User {
      * Saves state of user.
      */
     public function saveState(): void {
-        if (!$this->mysqli->query("update users set name = '" . $this->mysqli->escape_string($this->name) . "', timezone = '$this->timezone' where user_handle = '$this->user_handle'")) Logs::mysql($this->mysqli);
+        if (!$this->mysqli->query("update users set name = '" . $this->mysqli->escape_string($this->name) . "', timezone = '$this->timezone' where user_handle = '" . $this->mysqli->escape_string($this->user_handle) . "'")) Logs::mysql($this->mysqli);
     }
 }

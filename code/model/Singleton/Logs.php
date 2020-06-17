@@ -3,7 +3,7 @@
 namespace Kelvinho\Notes\Singleton;
 
 use mysqli;
-use function Kelvinho\Notes\formattedTime;
+use RuntimeException;
 
 /**
  * Class Logs, handles logging.
@@ -14,26 +14,6 @@ use function Kelvinho\Notes\formattedTime;
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 class Logs {
-    /**
-     * Logs when a virus pings back but is not recognized.
-     *
-     * @param string $virus_id The virus id
-     */
-    public static function strayVirus(string $virus_id): void {
-        file_put_contents(STRAY_VIRUS_LOG_FILE, "Virus $virus_id pings at " . time() . " (" . formattedTime() . ")\n", FILE_APPEND);
-        Header::notFound();
-    }
-
-    /**
-     * Logs when an attack pings back but is not recognized. Actually for now I'm just lazy implementing this
-     *
-     * @param string $attack_id
-     */
-    public static function strayAttack(string $attack_id): void {
-        Header::forbidden();
-        echo $attack_id;
-    }
-
     /**
      * Logs an unreachable place, needs further debugging.
      *
@@ -49,7 +29,7 @@ class Logs {
      * @param string $message The message to log
      */
     public static function error(string $message): void {
-        throw new \RuntimeException("Error: " . $message);
+        throw new RuntimeException("Error: " . $message);
     }
 
     /**

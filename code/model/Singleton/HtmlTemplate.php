@@ -19,6 +19,9 @@ class HtmlTemplate {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <meta name="google-signin-scope" content="profile email">
+        <meta name="google-signin-client_id"
+              content="<?php echo GOOGLE_CLIENT_ID; ?>">
         <link rel="stylesheet" href="<?php echo DOMAIN_RESOURCES; ?>/css/styles.css">
         <!--suppress CssUnusedSymbol -->
         <style>
@@ -44,7 +47,7 @@ class HtmlTemplate {
                 <div class="w3-dropdown-content w3-bar-block w3-card-4" style="position: fixed;right: 0; top: 38px;">
                     <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/profile" class="w3-bar-item w3-button">Profile</a>
                     <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/faq" class="w3-bar-item w3-button">FAQ</a>
-                    <a href="<?php echo CHARACTERISTIC_DOMAIN; ?>/logout" class="w3-bar-item w3-button">Sign out</a>
+                    <a onclick="logout()" class="w3-bar-item w3-button">Sign out</a>
                 </div>
             </div>
             <?php if ($additionalCb2 != null) $additionalCb2(); ?>
@@ -58,6 +61,19 @@ class HtmlTemplate {
      */
     public static function scripts(): void { ?>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
         <?php include(APP_LOCATION . "/resources/js/scripts.php"); ?>
+        <!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
+        <script>
+            function onGoogleLoad() {
+                gapi.load('auth2', function() {
+                    gapi.auth2.init();
+                });
+            }
+            function logout() {
+                let auth2 = gapi.auth2.getAuthInstance();
+                auth2.signOut().then(() => window.location = "<?php echo CHARACTERISTIC_DOMAIN; ?>/logout");
+            }
+        </script>
     <?php }
 }

@@ -33,17 +33,44 @@ if ($authenticator->authenticated()) Header::redirectToHome(); ?>
 <div id="register_message" style="color: red;"><?php echo $requestData->get("registerMessage", ""); ?></div>
 <br>
 <button class="w3-btn w3-light-green" onclick="register()">Register</button>
+<h2>Log in/register with 3<sup>rd</sup> party providers</h2>
+<div class="g-signin2" data-width="240" data-height="50" data-longtitle="true" data-theme="light"
+     data-onsuccess="onGoogleSuccess" data-onfailure="onGoogleFailure"></div>
 <h2>What is this?</h2>
-<p>This application's purpose is to annotate sections of any websites that you come across. You can comment on the side
-    of the things you find interesting, to be viewed later on, kinda like google docs's comment functionality. It should
-    work on almost all websites, even ones that include complex Latex symbols. In the future, the ideal will be to make
+<p>This application's purpose is to annotate sections of any websites that you come across. You can comment on the
+    side
+    of the things you find interesting, to be viewed later on, kinda like google docs's comment functionality. It
+    should
+    work on almost all websites, even ones that include complex Latex symbols. In the future, the ideal will be to
+    make
     the annotations sharable to whomever you like.</p>
 <p>This application is under the MIT license, and is freely available over <a href="<?php echo GITHUB_PAGE; ?>"
                                                                               style="color: blue; cursor: pointer;">github</a>,
     if the technical among you want to host this on your own website or want to check the integrity and security of
     this. I have put my best efforts into securing the application, but there can still be vulnerabilities.</p>
+<div id="toast" class="w3-round-xxlarge"></div>
 </body>
 <?php HtmlTemplate::scripts(); ?>
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
+<script>
+    function onGoogleSuccess(googleUser) {
+        $.ajax({
+            url: "<?php echo DOMAIN_CONTROLLER; ?>/federatedSignin",
+            type: "POST",
+            data: {
+                type: "google",
+                timezone: gui.register_timezone.val(),
+                token: googleUser.getAuthResponse().id_token
+            },
+            success: () => window.location = "<?php echo CHARACTERISTIC_DOMAIN . "/login"; ?>",
+            error: () => toast.display("Something went wrong! Can't signin")
+        });
+    }
+
+    function onGoogleFailure() {
+        toast.display("Can't log in to Google. Please try again");
+    }
+</script>
 <script type="application/javascript">
     const gui = {
         login_user_handle: $("#login_user_handle"),
@@ -112,5 +139,7 @@ if ($authenticator->authenticated()) Header::redirectToHome(); ?>
     gui.register_user_handle.keydown(registerFunction);
     gui.register_password.keydown(registerFunction);
     gui.register_name.keydown(registerFunction);
+
+    gui.register_timezone.val(Intl.DateTimeFormat().resolvedOptions().timeZone)
 </script>
 </html>

@@ -7,7 +7,6 @@
 namespace Kelvinho\Notes {
 
     use Exception;
-    use Kelvinho\Notes\Singleton\Logs;
 
     /**
      * Map.
@@ -49,63 +48,6 @@ namespace Kelvinho\Notes {
     }
 
     /**
-     * Format unix timestamp to a readable format. If no time is given, it will take the current time.
-     *
-     * @param int $time Optional unix timestamp
-     * @return false|string The formatted time
-     */
-    function formattedTime(int $time = -1): string {
-        if ($time == -1) $time = time();
-        return date("Y/m/d h:i:sa", $time);
-    }
-
-    /**
-     * Format a timespan in seconds to something like 1 hour 5 minutes 3 seconds
-     *
-     * @param int $seconds
-     * @return string
-     */
-    function formattedTimeSpan(int $seconds): string {
-        $answer = "";
-        $intervals = [86400, 3600, 60, 1];
-        $singularIntervals = ["day", "hour", "minute", "second"];
-        $pluralIntervals = ["days", "hours", "minutes", "seconds"];
-        for ($i = 0; $i < count($intervals); $i++) {
-            $wholeAmount = intdiv($seconds, $intervals[$i]);
-            if ($wholeAmount == 1) {
-                $answer .= $wholeAmount . " " . $singularIntervals[$i] . " ";
-            } else if ($wholeAmount > 1) {
-                $answer .= $wholeAmount . " " . $pluralIntervals[$i] . " ";
-            }
-            $seconds = $seconds % $intervals[$i];
-        }
-        return trim($answer);
-    }
-
-    /**
-     * Make a long-ass hash (SHA256) to something like abc123defG...
-     *
-     * @param string $hash
-     * @return string
-     */
-    function formattedHash(string $hash): string {
-        return substr($hash, 0, 10) . "...";
-    }
-
-    /**
-     * Initializing an array with size with default values
-     *
-     * @param int $size
-     * @param $element
-     * @return array
-     */
-    function initializeArray(int $size, $element): array {
-        $array = [];
-        for ($i = 0; $i < $size; $i++) $array[] = $element;
-        return $array;
-    }
-
-    /**
      * Checks whether the path is good (aka free of any directory traversal)
      *
      * @param string $basePath
@@ -116,54 +58,6 @@ namespace Kelvinho\Notes {
         $realBase = realpath($basePath);
         $realUserPath = realpath($basePath . $relativePath);
         return ($realUserPath === false || strpos($realUserPath, $realBase) !== 0) ? "" : $realUserPath;
-    }
-
-    /**
-     * Strips the protocol part (http://, https://, ftp://, ...) out of a url.
-     *
-     * @param string $url
-     * @return string
-     */
-    function stripProtocol(string $url): string {
-        $protocols = ["http://", "https://", "ftp://", "sftp://", "ssh://"];
-        foreach ($protocols as $protocol) {
-            $url = str_replace($protocol, "", $url);
-        }
-        return $url;
-    }
-
-    /**
-     * Returns a nice looking file size
-     *
-     * @param int $bytes
-     * @return string
-     */
-    function niceFileSize(int $bytes): string {
-        $labels = ["TB", "GB", "MB", "KB", "bytes"];
-        $amounts = [1000000000000, 1000000000, 1000000, 1000, 1];
-        $index = 0;
-        if ($bytes == 0) {
-            return "0 bytes";
-        }
-        while (true) {
-            if ($bytes >= $amounts[$index]) {
-                return (int)($bytes / $amounts[$index] * 100) / 100 . " " . $labels[$index];
-            }
-            $index += 1;
-        }
-        Logs::unreachableState("ExploreDir admin page, niceSize");
-        return "";
-    }
-
-    /**
-     * Returns a nice looking cost
-     *
-     * @param $cents
-     * @return string
-     */
-    function niceCost(float $cents): string {
-        $cents = (int)$cents;
-        return $cents / 100;
     }
 
     /**

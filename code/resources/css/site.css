@@ -1,0 +1,107 @@
+
+#page {
+    width: 70vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border-width: 0;
+}
+
+#panel {
+    position: absolute;
+    top: 0;
+    left: 70vw;
+    width: 30vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.boundingBox {
+    position: fixed;
+    background-color: rgba(198, 222, 31, 0.3);
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.contentBox {
+    position: fixed;
+    top: -50vh;
+    left: 75vw;
+}
+
+.unknownBox {
+    position: relative;
+    left: 5vw;
+    margin-top: 20px;
+}
+
+.contentBox, .unknownBox {
+    width: 20vw;
+    z-index: 10000;
+    padding: 16px;
+    transition: left 0.5s;
+}
+
+#unknowns {
+    top: 38px;
+    height: calc(100vh - 38px);
+    width: 30vw;
+    overflow-y: scroll;
+    padding: 20px 0;
+}
+
+.commentDropdown {
+    position: absolute;
+    z-index: 10001;
+    background-color: white;
+    padding: 0;
+}
+
+.commentDropdown>ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.commentDropdown>ul>li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.commentDropdown>ul>li:hover {
+    background-color: #ccc;
+}
+
+.commentMore {
+    color: #ccc;
+}
+
+.commentMore:hover {
+    color: #000;
+}
+
+#toolBar {
+    width: 30vw;
+    left: 70vw;
+}
+
+textarea {
+    resize: none;
+}
+
+.contentBox button, .unknownBox button {
+    margin-top: 8px;
+}
+
+body {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+}

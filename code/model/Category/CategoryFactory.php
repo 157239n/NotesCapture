@@ -42,13 +42,13 @@ class CategoryFactory {
             if ($this->session->getCheck("user_handle") !== $user_handle) throw new CategoryNotFound();
         }
         if ($parentCategoryId === 0) return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, null, $name, 0, $user_handle, false);
-        else return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, $this->get($parentCategoryId), $name, $parentCategoryId, $user_handle, false);
+        else return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, $this->get($parentCategoryId, $user_handle), $name, $parentCategoryId, $user_handle, false);
     }
 
     public function getRoot(): Category {
         if (!$this->active) throw new CategoryNotFound();
         $user_handle = $this->session->getCheck("user_handle");
-        if (!$answer = $this->mysqli->query("select category_id, parent_category_id, name from categories where user_handle = '$user_handle'")) throw new CategoryNotFound();
+        if (!$answer = $this->mysqli->query("select category_id, parent_category_id, name from categories where user_handle = '" . $this->mysqli->escape_string($user_handle) . "'")) throw new CategoryNotFound();
         /** @var Category[] $categories */
         $categories = array();
         $randomCategory = null;
@@ -74,11 +74,11 @@ class CategoryFactory {
     public function new(Category $parentCategory = null, string $name = "", string $user_handle = ""): Category {
         if ($this->active) $user_handle = $this->session->getCheck("user_handle");
         if ($parentCategory == null) {
-            if (!$this->mysqli->query("insert into categories (user_handle, name) values ('$user_handle', 'Root')")) Logs::error($this->mysqli->error);
+            if (!$this->mysqli->query("insert into categories (user_handle, name) values ('" . $this->mysqli->escape_string($user_handle) . "', 'Root')")) Logs::error($this->mysqli->error);
             return $this->get($this->mysqli->insert_id, $user_handle);
         } else {
             $parentCategoryId = $parentCategory->getCategoryId();
-            if (!$this->mysqli->query("insert into categories (user_handle, parent_category_id, name) values ('$user_handle', $parentCategoryId, '" . $this->mysqli->escape_string($name) . "')")) Logs::error($this->mysqli->error);
+            if (!$this->mysqli->query("insert into categories (user_handle, parent_category_id, name) values ('" . $this->mysqli->escape_string($user_handle) . "', $parentCategoryId, '" . $this->mysqli->escape_string($name) . "')")) Logs::error($this->mysqli->error);
             return $this->get($this->mysqli->insert_id, $user_handle);
         }
     }

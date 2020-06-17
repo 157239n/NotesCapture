@@ -4,7 +4,7 @@ use Kelvinho\Notes\Singleton\Header;
 use Kelvinho\Notes\Singleton\HtmlTemplate;
 
 if (!$authenticator->authenticated()) Header::redirectToHome();
-$user = $userFactory->get($session->getCheck("user_handle"));
+$user = $userFactory->currentUser();
 ?>
 <!DOCTYPE html>
 <html lang="en_US">

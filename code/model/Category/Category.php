@@ -2,7 +2,6 @@
 
 namespace Kelvinho\Notes\Category;
 
-use Kelvinho\Notes\Singleton\Logs;
 use Kelvinho\Notes\Website\Website;
 use Kelvinho\Notes\Website\WebsiteFactory;
 use mysqli;
@@ -116,10 +115,6 @@ class Category {
         return $this->name;
     }
 
-    public function setName(string $name): void {
-        $this->name = $name;
-    }
-
     public function isRoot(): bool {
         return $this->parentCategoryId === 0;
     }
@@ -130,10 +125,6 @@ class Category {
     public function getChildren(): array {
         if (!$this->fullGraph) $this->children = $this->categoryFactory->getRoot()->findChildCategory($this->categoryId)->getChildren();
         return $this->children;
-    }
-
-    public function saveState(): void {
-        if (!$this->mysqli->query("update categories set parent_category_id = $this->parentCategoryId, name = '" . $this->mysqli->escape_string($this->name) . "' where category_id = $this->categoryId")) Logs::mysql($this->mysqli);
     }
 
     public function delete(): void {

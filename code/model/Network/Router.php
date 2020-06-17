@@ -106,28 +106,9 @@ class Router {
             return;
         }
 
-        /*
-        $stub = explode("/", trim($this->session->get("remoteFull"), "/"));
-        array_pop($stub);
-        $uriStub = explode("/" . CHARACTERISTIC_HASH, $this->requestData->serverCheck("REQUEST_URI"))[0];
-        if ($this->session->has("remote"))
-            Header::redirectBare(implode("/", $stub) . $uriStub);
-        /**/
-        //readfile($this->session->get("remote") . $this->requestData->serverCheck("REQUEST_URI"));
-        //$this->requestData->rightHost() ? Header::redirectToHome() : Header::notFound();
-        //\header("Location: http://google.com", true, 308);
-
-        //Header::redirectBare($this->redirectUrl());
-        $redirectUrl = $this->redirectUrl();
-        //Logs::log($redirectUrl);
-        /*
-        \header("Content-type: " . mime_content_type($redirectUrl));
-        Logs::log($redirectUrl);
-        readfile($redirectUrl);
-/**/
-
+        // trying to get the resource on the 3rd party server, then bring it back here, spoofing the Content-Type on the way
         header_remove();
-        $curl = curl_init($redirectUrl);
+        $curl = curl_init($this->redirectUrl());
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -154,8 +135,7 @@ class Router {
         however, because we don't really have access to the "..", there is no way directly to redirect to the appropriate
         resource but, the stable hidden url is RANDOM_HASH/9/8/7/6/5/4/3/2/1/0/9/8/7/6/5/4/3/2/1/site. This way, by reading off the remaining
         numbers in the url, we can know how many ".." are there, and then we can do the same with the remote full, to pinpoint
-        the resource we want
-        */
+        the resource we want */
 
         $remote = $this->session->getCheck("remote"); // looks like https://ruder.io/optimizing-gradient-descent/index.html
         $requestUri = $this->requestData->serverCheck("REQUEST_URI"); // looks like /4b6fb4.../9/8/7/6/5/4/3/assets/css/style.css

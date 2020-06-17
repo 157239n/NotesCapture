@@ -4,6 +4,10 @@ namespace Kelvinho\Notes\Auth;
 
 use Kelvinho\Notes\Category\Category;
 use Kelvinho\Notes\Network\Session;
+use Kelvinho\Notes\Permission\Permission;
+use Kelvinho\Notes\Permission\PermissionFactory;
+use Kelvinho\Notes\Permission\PermissionNotFound;
+use Kelvinho\Notes\User\UserFactory;
 use Kelvinho\Notes\Website\Website;
 use mysqli;
 
@@ -18,10 +22,14 @@ use mysqli;
 class AuthenticatorImp implements Authenticator {
     private Session $session;
     private mysqli $mysqli;
+    private PermissionFactory $permissionFactory;
+    private UserFactory $userFactory;
 
-    public function __construct(Session $session, mysqli $mysqli) {
+    public function __construct(Session $session, mysqli $mysqli, PermissionFactory $permissionFactory, UserFactory $userFactory) {
         $this->session = $session;
         $this->mysqli = $mysqli;
+        $this->permissionFactory = $permissionFactory;
+        $this->userFactory = $userFactory;
     }
 
     /**
@@ -35,9 +43,21 @@ class AuthenticatorImp implements Authenticator {
         return $this->session->get("user_handle") === $user_handle;
     }
 
+    /**
+     * Returns whether the user is allowed to access a website. Checks for cross site relationships as well.
+     *
+     * @param Website $website
+     * @return bool
+     */
     public function websiteAuthenticated(Website $website): bool {
         if (!$this->authenticated()) return false;
-        return $this->session->getCheck("user_handle") === $website->getUserHandle();
+        $user_handle = $this->session->getCheck("user_handle");
+        if ($user_handle === $website->getUserHandle()) return true;
+        try {
+            return $this->permissionFactory->getFromWebsiteAndUser($website, $this->userFactory->get($user_handle))->getAccess() === Permission::READ_AND_WRITE;
+        } catch (PermissionNotFound $e) {
+            return false;
+        }
     }
 
     public function categoryAuthenticated(Category $category): bool {

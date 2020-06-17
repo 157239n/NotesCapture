@@ -2,6 +2,8 @@
 
 namespace Kelvinho\Notes\Highlight;
 
+use Kelvinho\Notes\Comment\CommentFactory;
+use Kelvinho\Notes\Network\Session;
 use Kelvinho\Notes\Singleton\Logs;
 use Kelvinho\Notes\Website\Website;
 use mysqli;
@@ -9,9 +11,13 @@ use function Kelvinho\Notes\map;
 
 class HighlightFactory {
     private mysqli $mysqli;
+    private Session $session;
+    private CommentFactory $commentFactory;
 
-    public function __construct(mysqli $mysqli) {
+    public function __construct(mysqli $mysqli, Session $session, CommentFactory $commentFactory) {
         $this->mysqli = $mysqli;
+        $this->session = $session;
+        $this->commentFactory = $commentFactory;
     }
 
     /**
@@ -21,9 +27,9 @@ class HighlightFactory {
      * @return Highlight
      */
     public function get($highlightId): Highlight {
-        if (!$answer = $this->mysqli->query("select website_id, strings, comment from highlights where highlight_id = $highlightId")) throw new HighlightNotFound();
+        if (!$answer = $this->mysqli->query("select website_id, strings from highlights where highlight_id = $highlightId")) throw new HighlightNotFound();
         if (!$row = $answer->fetch_assoc()) throw new HighlightNotFound("Highlight id: $highlightId");
-        return new Highlight($this->mysqli, $highlightId, (int)$row["website_id"], $row["strings"], $row["comment"]);
+        return new Highlight($this->mysqli, $this->commentFactory, $highlightId, (int)$row["website_id"], $row["strings"]);
     }
 
     /**
@@ -35,22 +41,23 @@ class HighlightFactory {
     public function all(Website $website): array {
         $websiteId = $website->getWebsiteId();
         $comments = [];
-        if (!$answer = $this->mysqli->query("select highlight_id, strings, comment from highlights where website_id = $websiteId")) throw new HighlightNotFound();
-        while ($row = $answer->fetch_assoc()) $comments[] = new Highlight($this->mysqli, $row["highlight_id"], $websiteId, $row["strings"], $row["comment"]);
+        if (!$answer = $this->mysqli->query("select highlight_id, strings from highlights where website_id = $websiteId")) throw new HighlightNotFound();
+        while ($row = $answer->fetch_assoc()) $comments[] = new Highlight($this->mysqli, $this->commentFactory, $row["highlight_id"], $websiteId, $row["strings"]);
         return $comments;
     }
 
     /**
      * @param Website $website
-     * @param string $comment
      * @param string[] $strings
      * @return Highlight
      */
-    public function new(Website $website, string $comment, array $strings = null): Highlight {
+    public function new(Website $website, array $strings = null): Highlight {
         if ($strings == null) $strings = [];
-        $strings = implode(" ", map($strings, fn ($str) => base64_encode($str)));
+        $strings = implode(" ", map($strings, fn($str) => base64_encode($str)));
         $websiteId = $website->getWebsiteId();
-        if (!$this->mysqli->query("insert into highlights (website_id, strings, comment) values ($websiteId, '$strings', '" . $this->mysqli->escape_string($comment) . "')")) Logs::error($this->mysqli->error);
-        return $this->get($this->mysqli->insert_id);
+        if (!$this->mysqli->query("insert into highlights (website_id, strings) values ($websiteId, '$strings')")) Logs::error($this->mysqli->error);
+        $highlight = $this->get($this->mysqli->insert_id);
+        $this->commentFactory->new($highlight, $this->session->getCheck("user_handle"), "");
+        return $highlight;
     }
 }
