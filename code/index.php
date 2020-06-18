@@ -45,22 +45,17 @@ $blacklistFactory = new BlacklistFactory();
 
 $timezone = new Timezone();
 
-$categoryFactory = new CategoryFactory($mysqli, $session);
 $commentFactory = new CommentFactory($mysqli);
+$permissionFactory = new PermissionFactory($mysqli);
 $highlightFactory = new HighlightFactory($mysqli, $session, $commentFactory);
-$websiteFactory = new WebsiteFactory($mysqli, $highlightFactory, $session);
-$categoryFactory->addContext($websiteFactory);
+$websiteFactory = new WebsiteFactory($mysqli, $highlightFactory, $session, $permissionFactory);
+$categoryFactory = new CategoryFactory($mysqli, $session, $websiteFactory);
 
 /** @var UserFactory $userFactory */
 $userFactory = new UserFactoryImp($mysqli, $session, $timezone, $categoryFactory);
 
-$permissionFactory = new PermissionFactory($mysqli, $websiteFactory, $userFactory);
-
 /** @var Authenticator $authenticator */
 $authenticator = new AuthenticatorImp($session, $mysqli, $permissionFactory, $userFactory);
-
-// adding missing dependencies
-$websiteFactory->addContext($permissionFactory);
 
 // create a router, add routes and run
 $router = new Router($requestData, $session);

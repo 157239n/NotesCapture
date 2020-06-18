@@ -9,6 +9,14 @@ use Kelvinho\Notes\Website\Website;
 use mysqli;
 use function Kelvinho\Notes\map;
 
+/**
+ * Class HighlightFactory.
+ *
+ * @package Kelvinho\Notes\Highlight
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class HighlightFactory {
     private mysqli $mysqli;
     private Session $session;
@@ -21,7 +29,7 @@ class HighlightFactory {
     }
 
     /**
-     * Gets a comment given a comment id.
+     * Gets a Highlight given an id.
      *
      * @param $highlightId
      * @return Highlight

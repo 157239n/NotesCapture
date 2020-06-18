@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Invites another User to a Website, given:
+ * - user_handle: The new User's handle
+ * - websiteId: The Website's id
+ *
+ * Must:
+ * - Owns the Website
+ */
+
 use Kelvinho\Notes\Permission\Permission;
 use Kelvinho\Notes\Singleton\Header;
 

@@ -32,7 +32,7 @@ $router->get(CHARACTERISTIC_HASH . "/login", function () use ($authenticator, $r
     include(__DIR__ . "/../view/login.php");
 });
 
-$router->get(CHARACTERISTIC_HASH . "/dashboard", function () use ($authenticator, $session, $userFactory, $permissionFactory) {
+$router->get(CHARACTERISTIC_HASH . "/dashboard", function () use ($authenticator, $session, $userFactory, $websiteFactory, $permissionFactory) {
     include(__DIR__ . "/../view/dashboard.php");
 });
 

@@ -2,53 +2,41 @@
 
 namespace Kelvinho\Notes\Permission;
 
-use Kelvinho\Notes\User\User;
-use Kelvinho\Notes\User\UserFactory;
-use Kelvinho\Notes\Website\Website;
-use Kelvinho\Notes\Website\WebsiteFactory;
 use mysqli;
 
+/**
+ * Class Permission. A Website owner can share it with other Users and when they share, a new Permission is created,
+ * stating that a User can have access to a Website. Currently there's only read and write access, and nothing further,
+ * but that may change in the future.
+ *
+ * @package Kelvinho\Notes\Permission
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class Permission {
     public const READ_AND_WRITE = 0;//, READ_ONLY = 1, NO_ACCESS = 2;
 
     private mysqli $mysqli;
-    private WebsiteFactory $websiteFactory;
-    private UserFactory $userFactory;
     private int $permissionId;
     private int $websiteId;
     private string $user_handle;
     private int $access;
-    private ?Website $website = null;
-    private ?User $user = null;
 
-    /**
-     * Highlight constructor.
-     * @param mysqli $mysqli
-     * @param WebsiteFactory $websiteFactory
-     * @param UserFactory $userFactory
-     * @param int $permissionId
-     * @param int $websiteId
-     * @param string $user_handle
-     * @param int $access
-     */
-    public function __construct(mysqli $mysqli, WebsiteFactory $websiteFactory, UserFactory $userFactory, int $permissionId, int $websiteId, string $user_handle, int $access) {
+    public function __construct(mysqli $mysqli, int $permissionId, int $websiteId, string $user_handle, int $access) {
         $this->mysqli = $mysqli;
-        $this->websiteFactory = $websiteFactory;
-        $this->userFactory = $userFactory;
         $this->permissionId = $permissionId;
         $this->websiteId = $websiteId;
         $this->user_handle = $user_handle;
         $this->access = $access;
     }
 
-    public function getWebsite(): Website {
-        if ($this->website === null) $this->website = $this->websiteFactory->get($this->websiteId);
-        return $this->website;
+    public function getWebsiteId(): int {
+        return $this->websiteId;
     }
 
-    public function getUser(): User {
-        if ($this->user === null) $this->user = $this->userFactory->get($this->user_handle);
-        return $this->user;
+    public function getUserHandle(): string {
+        return $this->user_handle;
     }
 
     public function getAccess(): int {

@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Creates a new Comment given:
+ * - highlightId: A highlight id
+ * - parentCommentId: The parent comment's id
+ * - content: The comment content
+ *
+ * Must:
+ * - Have permission to read and write to the current Website.
+ *
+ * Returns 4 lines:
+ * - The comment id
+ * - The current/commenting user's name encoded in base 64
+ * - The current/commenting user's picture url encoded in base 64
+ * - The comment's formatted time according to the current user
+ */
+
 use Kelvinho\Notes\Singleton\Header;
 
 $user = $userFactory->currentUser();

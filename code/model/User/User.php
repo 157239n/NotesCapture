@@ -9,10 +9,9 @@ use Kelvinho\Notes\Timezone\Timezone;
 use mysqli;
 
 /**
- * Class User
+ * Class User.
  *
  * Represents a user. The representation of this will be stored in table users only. No data is stored on disk.
- * But if needed in the future, it should be placed at DATA_FILE/users/{user_id}/
  *
  * @package Kelvinho\Notes\User
  * @author Quang Ho <157239q@gmail.com>
@@ -82,9 +81,6 @@ class User {
         return $this->user_handle;
     }
 
-    /**
-     * Saves state of user.
-     */
     public function saveState(): void {
         if (!$this->mysqli->query("update users set name = '" . $this->mysqli->escape_string($this->name) . "', timezone = '$this->timezone' where user_handle = '" . $this->mysqli->escape_string($this->user_handle) . "'")) Logs::mysql($this->mysqli);
     }

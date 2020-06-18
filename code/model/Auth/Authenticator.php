@@ -31,7 +31,19 @@ interface Authenticator {
      */
     public function authenticate(string $user_handle, string $password): bool;
 
+    /**
+     * Returns whether the user is allowed to access a website. Checks for cross site relationships as well as ownership.
+     *
+     * @param Website $website
+     * @return bool
+     */
     public function websiteAuthenticated(Website $website): bool;
 
+    /**
+     * Returns whether the user is allowed to access a category.
+     *
+     * @param Category $category
+     * @return bool
+     */
     public function categoryAuthenticated(Category $category): bool;
 }

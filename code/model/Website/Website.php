@@ -7,6 +7,14 @@ use Kelvinho\Notes\Highlight\HighlightFactory;
 use Kelvinho\Notes\Permission\PermissionFactory;
 use mysqli;
 
+/**
+ * Class Website
+ *
+ * @package Kelvinho\Notes\Website
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class Website {
     private mysqli $mysqli;
     private HighlightFactory $highlightFactory;

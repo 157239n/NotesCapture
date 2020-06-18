@@ -6,6 +6,14 @@ use Kelvinho\Notes\Highlight\Highlight;
 use Kelvinho\Notes\Singleton\Logs;
 use mysqli;
 
+/**
+ * Class CommentFactory
+ *
+ * @package Kelvinho\Notes\Comment
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class CommentFactory {
     private mysqli $mysqli;
 
@@ -14,7 +22,7 @@ class CommentFactory {
     }
 
     /**
-     * Gets root comment of a specific highlight.
+     * Gets root comment of a specific highlight, with the full chain (aka linked list) constructed.
      *
      * @param int $highlightId
      * @return Comment

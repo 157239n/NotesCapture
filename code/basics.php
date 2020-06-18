@@ -48,25 +48,12 @@ namespace Kelvinho\Notes {
     }
 
     /**
-     * Checks whether the path is good (aka free of any directory traversal)
-     *
-     * @param string $basePath
-     * @param string $relativePath
-     * @return string
-     */
-    function goodPath(string $basePath, string $relativePath): string {
-        $realBase = realpath($basePath);
-        $realUserPath = realpath($basePath . $relativePath);
-        return ($realUserPath === false || strpos($realUserPath, $realBase) !== 0) ? "" : $realUserPath;
-    }
-
-    /**
      * Gets the title of a website. Returns an empty string if nothing is found.
      *
      * @param string $url
      * @return string
      */
-    function get_title(string $url): string {
+    function getTitle(string $url): string {
         try {
             $str = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 1))));
             if ($str === false) return "";
@@ -82,9 +69,15 @@ namespace Kelvinho\Notes {
         }
     }
 
-    function dump($var): string {
+    /**
+     * For debugging, used in conjunction with Logs::log()
+     *
+     * @param $variable
+     * @return string
+     */
+    function dump($variable): string {
         ob_start();
-        var_dump($var);
+        var_dump($variable);
         return ob_get_clean();
     }
 }

@@ -126,7 +126,7 @@ $user_handle = $user->getHandle(); ?>
 <br><br>
 <h2>Categories</h2>
 <ul id="categories">
-    <?php displayCategories($user->getRootCategory(), map($permissionFactory->getFromUser($user), fn(Permission $permission) => $permission->getWebsite())); ?>
+    <?php displayCategories($user->getRootCategory(), map($permissionFactory->getFromUser($user), fn(Permission $permission) => $websiteFactory->get($permission->getWebsiteId()))); ?>
 </ul>
 <div id="toast" class="w3-round-xxlarge"></div>
 <div id="tooltip" class="w3-round-large w3-white w3-card"></div>
@@ -331,7 +331,7 @@ $user_handle = $user->getHandle(); ?>
             url: "<?php echo DOMAIN_CONTROLLER . "/deleteCategory"; ?>",
             type: "POST",
             data: {
-                category_id: categoryId
+                categoryId: categoryId
             },
             success: () => window.location.reload(),
             error: () => toast.display("Can't connect to server to delete. Please check your internet connection.")
@@ -347,7 +347,7 @@ $user_handle = $user->getHandle(); ?>
                     url: "<?php echo DOMAIN_CONTROLLER . "/addWebsite"; ?>",
                     type: "POST",
                     data: {
-                        category_id: addWebsiteCategoryId,
+                        categoryId: addWebsiteCategoryId,
                         url: gui.txtAddWebsite.val()
                     },
                     success: (response) => openWebsite(response),
@@ -366,7 +366,7 @@ $user_handle = $user->getHandle(); ?>
                     url: "<?php echo DOMAIN_CONTROLLER . "/addCategory"; ?>",
                     type: "POST",
                     data: {
-                        category_id: addCategoryCategoryId,
+                        categoryId: addCategoryCategoryId,
                         name: gui.txtAddCategory.val()
                     },
                     success: () => window.location.reload(),

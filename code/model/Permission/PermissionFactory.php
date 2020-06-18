@@ -4,26 +4,28 @@ namespace Kelvinho\Notes\Permission;
 
 use Kelvinho\Notes\Singleton\Logs;
 use Kelvinho\Notes\User\User;
-use Kelvinho\Notes\User\UserFactory;
 use Kelvinho\Notes\Website\Website;
-use Kelvinho\Notes\Website\WebsiteFactory;
 use mysqli;
 
+/**
+ * Class PermissionFactory.
+ *
+ * @package Kelvinho\Notes\Permission
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class PermissionFactory {
     private mysqli $mysqli;
-    private WebsiteFactory $websiteFactory;
-    private UserFactory $userFactory;
 
-    public function __construct(mysqli $mysqli, WebsiteFactory $websiteFactory, UserFactory $userFactory) {
+    public function __construct(mysqli $mysqli) {
         $this->mysqli = $mysqli;
-        $this->websiteFactory = $websiteFactory;
-        $this->userFactory = $userFactory;
     }
 
     public function get(int $permissionId): Permission {
         if (!$answer = $this->mysqli->query("select website_id, user_handle, access from permissions where permission_id = $permissionId")) throw new PermissionNotFound();
         if (!$row = $answer->fetch_assoc()) throw new PermissionNotFound();
-        return new Permission($this->mysqli, $this->websiteFactory, $this->userFactory, $permissionId, $row["website_id"], $row["user_handle"], $row["access"]);
+        return new Permission($this->mysqli, $permissionId, $row["website_id"], $row["user_handle"], $row["access"]);
     }
 
     /**
@@ -38,7 +40,7 @@ class PermissionFactory {
         /** @var Permission[] $permissions */
         $permissions = [];
         while ($row = $answer->fetch_assoc())
-            $permissions[] = new Permission($this->mysqli, $this->websiteFactory, $this->userFactory, $row["permission_id"], $websiteId, $row["user_handle"], (int)$row["access"]);
+            $permissions[] = new Permission($this->mysqli, $row["permission_id"], $websiteId, $row["user_handle"], (int)$row["access"]);
         return $permissions;
     }
 
@@ -53,7 +55,7 @@ class PermissionFactory {
         if (!$answer = $this->mysqli->query("select permission_id, website_id, access from permissions where user_handle = '" . $this->mysqli->escape_string($user_handle) . "'")) throw new PermissionNotFound();
         /** @var Permission[] $permissions */
         $permissions = [];
-        while ($row = $answer->fetch_assoc()) $permissions[] = new Permission($this->mysqli, $this->websiteFactory, $this->userFactory, $row["permission_id"], $row["website_id"], $user_handle, $row["access"]);
+        while ($row = $answer->fetch_assoc()) $permissions[] = new Permission($this->mysqli, $row["permission_id"], $row["website_id"], $user_handle, $row["access"]);
         return $permissions;
     }
 
@@ -62,7 +64,7 @@ class PermissionFactory {
         $user_handle = $user->getHandle();
         if (!$answer = $this->mysqli->query("select permission_id, access from permissions where website_id = $websiteId and user_handle = '" . $this->mysqli->escape_string($user_handle) . "'")) throw new PermissionNotFound();
         if (!$row = $answer->fetch_assoc()) throw new PermissionNotFound();
-        return new Permission($this->mysqli, $this->websiteFactory, $this->userFactory, $row["permission_id"], $websiteId, $user_handle, $row["access"]);
+        return new Permission($this->mysqli, $row["permission_id"], $websiteId, $user_handle, $row["access"]);
     }
 
     /**

@@ -113,7 +113,7 @@ if ($authenticator->authenticated()) Header::redirectToHome(); ?>
             gui.register_message.html("User name can only be letters, numbers and \"_\".");
             return;
         }
-        if (register_user_handle.length > <?php echo NAME_LENGTH_LIMIT; ?>) {
+        if (register_user_handle.length > <?php echo USER_NAME_LENGTH_LIMIT; ?>) {
             gui.register_message.html("User handle exceeds max length of 20");
             return;
         }

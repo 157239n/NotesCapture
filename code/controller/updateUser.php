@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Updates a User, given:
+ * - name: The User's name
+ * - timezone: The User's timezone, like America/New_York
+ *
+ * Must:
+ * - Be logged in
+ */
+
 use Kelvinho\Notes\Singleton\Header;
 
 if (!$authenticator->authenticated()) Header::forbidden();

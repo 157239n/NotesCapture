@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Sets the remote information, and the expiration time given:
+ * - websiteId: The Website's id
+ *
+ * Must:
+ * - Be signed in
+ */
+
 use Kelvinho\Notes\Singleton\Header;
 
 if (!$authenticator->authenticated()) Header::forbidden();

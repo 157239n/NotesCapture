@@ -9,7 +9,7 @@ use Kelvinho\Notes\Timezone\Timezone;
 use mysqli;
 
 /**
- * Class UserFactoryImp
+ * Class UserFactoryImp. Users are cached, so we can wastefully get them how much we like.
  *
  * @package Kelvinho\Notes\User
  * @author Quang Ho <157239q@gmail.com>

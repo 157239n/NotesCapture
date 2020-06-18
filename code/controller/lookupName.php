@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Looks up all Users whose name starts with something, given:
+ * - starts: The start of the name to look for
+ * - exclude: A string of base 64 encoded user handles, separated by new line characters to exclude from the look up results
+ *
+ * Returns:
+ * - The amount of Users to be listed, and for each User:
+ *   - The User's handle
+ *   - The User's name, base 64 encoded
+ *   - The User's picture url, base 64 encoded
+ */
+
 use Kelvinho\Notes\User\User;
 use function Kelvinho\Notes\filter;
 use function Kelvinho\Notes\map;

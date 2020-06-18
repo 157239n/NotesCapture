@@ -7,24 +7,33 @@ use Kelvinho\Notes\Singleton\Logs;
 use Kelvinho\Notes\Website\WebsiteFactory;
 use mysqli;
 
+/**
+ * Class CategoryFactory. Constructs a Category.
+ *
+ * It is important to remember that there are 2 loading modes. 1 loads a category and every parent category and the
+ * other loads a full graph of the categories. This fact is hidden from the outside, but is done to prevent excessive
+ * database querying (O(log(n)) instead of O(n)).
+ *
+ * @package Kelvinho\Notes\Category
+ * @author Quang Ho <157239q@gmail.com>
+ * @copyright Copyright (c) 2020 Quang Ho <https://github.com/157239n>
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
 class CategoryFactory {
     private mysqli $mysqli;
     private Session $session;
     private WebsiteFactory $websiteFactory;
     private bool $active;
 
-    public function __construct(mysqli $mysqli, Session $session) {
+    public function __construct(mysqli $mysqli, Session $session, WebsiteFactory $websiteFactory) {
         $this->mysqli = $mysqli;
         $this->session = $session;
+        $this->websiteFactory = $websiteFactory;
         $this->active = $this->session->has("user_handle");
     }
 
-    public function addContext(WebsiteFactory $websiteFactory) {
-        $this->websiteFactory = $websiteFactory;
-    }
-
     /**
-     * Gets a single category given id. This still has links all the way to the root node.
+     * Gets a single category given id. This still has links all the way to the root node, but does not create a full graph.
      *
      * @param $categoryId
      * @param string $user_handle Custom user handle, if in scenarios where it can't be obtained from the session
@@ -45,6 +54,11 @@ class CategoryFactory {
         else return new Category($this->mysqli, $this, $this->websiteFactory, $categoryId, $this->get($parentCategoryId, $user_handle), $name, $parentCategoryId, $user_handle, false);
     }
 
+    /**
+     * Creates a full graph, then pass the root back.
+     *
+     * @return Category
+     */
     public function getRoot(): Category {
         if (!$this->active) throw new CategoryNotFound();
         $user_handle = $this->session->getCheck("user_handle");
@@ -71,6 +85,12 @@ class CategoryFactory {
         throw new CategoryNotFound();
     }
 
+    /**
+     * @param Category|null $parentCategory
+     * @param string $name
+     * @param string $user_handle Used for when creating the root and "Shared with me" categories when creating a new user, when the user hasn't existed yet
+     * @return Category
+     */
     public function new(Category $parentCategory = null, string $name = "", string $user_handle = ""): Category {
         if ($this->active) $user_handle = $this->session->getCheck("user_handle");
         if ($parentCategory == null) {

@@ -32,23 +32,11 @@ class AuthenticatorImp implements Authenticator {
         $this->userFactory = $userFactory;
     }
 
-    /**
-     * Returns whether the user is authenticated.
-     *
-     * @param string|null $user_handle Optional user handle to make sure that the authenticated user is the same as the requesting user
-     * @return bool Whether the user is authenticated
-     */
     public function authenticated(string $user_handle = null): bool {
         if (empty($user_handle)) return $this->session->has("user_handle");
         return $this->session->get("user_handle") === $user_handle;
     }
 
-    /**
-     * Returns whether the user is allowed to access a website. Checks for cross site relationships as well.
-     *
-     * @param Website $website
-     * @return bool
-     */
     public function websiteAuthenticated(Website $website): bool {
         if (!$this->authenticated()) return false;
         $user_handle = $this->session->getCheck("user_handle");
@@ -65,13 +53,6 @@ class AuthenticatorImp implements Authenticator {
         return $this->session->getCheck("user_handle") === $category->getUserHandle();
     }
 
-    /**
-     * Authenticates a user.
-     *
-     * @param string $user_handle The user's handle
-     * @param string $password The user's password
-     * @return bool Whether the user is authenticated
-     */
     public function authenticate(string $user_handle, string $password): bool {
         $authenticated = false;
         if ($answer = $this->mysqli->query("select password_salt, password_hash from users where user_handle = '" . $this->mysqli->escape_string($user_handle) . "'"))

@@ -7,10 +7,11 @@ use Kelvinho\Notes\Website\WebsiteFactory;
 use mysqli;
 
 /**
- * Class Category
+ * Class Category. A user has a root category, which can have multiple other categories. You can think of them as folders.
+ * For each root category, there is another category called "Shared with me", with an id right after the root category.
  *
- * Represents a category of a website. The representation of this will be stored in table users only. No data is stored on disk.
- * But if needed in the future, it should be placed at DATA_FILE/users/{user_id}/
+ * The root and "Shared with me" category cannot be deleted and modified, unless the user is deleted. The latter cannot
+ * create new websites and child categories too.
  *
  * @package Kelvinho\Notes\Category
  * @author Quang Ho <157239q@gmail.com>
@@ -18,15 +19,15 @@ use mysqli;
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 class Category {
+    private mysqli $mysqli;
+    private CategoryFactory $categoryFactory;
+    private WebsiteFactory $websiteFactory;
     private int $categoryId;
     private int $parentCategoryId;
     private ?Category $parentCategory;
     /** @type Category[] */
     private array $children = array();
     private string $name;
-    private mysqli $mysqli;
-    private CategoryFactory $categoryFactory;
-    private WebsiteFactory $websiteFactory;
     private string $user_handle;
     private bool $fullGraph; // whether instantiation method involves constructing a whole graph
     /** @var Website[] */
@@ -48,6 +49,10 @@ class Category {
         return $this->user_handle;
     }
 
+    /**
+     * @param Category $parentCategory
+     * @internal For constructing the object only
+     */
     public function setParent(Category $parentCategory) {
         $this->parentCategory = $parentCategory;
         $this->parentCategoryId = $parentCategory->categoryId;
@@ -57,6 +62,12 @@ class Category {
         return $this->categoryId;
     }
 
+    /**
+     * Will return the correct parent category id, but you're supposed to get the parent category first, then get its id.
+     *
+     * @return int
+     * @internal For constructing the object only
+     */
     public function getParentCategoryId(): int {
         return $this->parentCategoryId;
     }
@@ -65,6 +76,10 @@ class Category {
         return $this->parentCategory;
     }
 
+    /**
+     * @param Category $childCategory
+     * @internal For constructing the object only
+     */
     public function addChild(Category $childCategory) {
         $this->children[$childCategory->categoryId] = $childCategory;
     }
@@ -104,6 +119,8 @@ class Category {
     }
 
     /**
+     * Get websites under this category.
+     *
      * @return Website[]
      */
     public function getWebsites(): array {

@@ -20,5 +20,5 @@ define("PADDING_NUMBER", 20);
 define("REMOTE_EXPIRES_DURATION", 10); // used in setRemote controller
 
 // inner workings related
-define("NAME_LENGTH_LIMIT", 1000);
+define("USER_NAME_LENGTH_LIMIT", 1000);
 define("USER_HANDLE_LENGTH_LIMIT", 100);
